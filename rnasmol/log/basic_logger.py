@@ -1,6 +1,7 @@
 import logging
 import os
 
+
 class BasicLogger(object):
     def __init__(self, path):
         #
@@ -8,8 +9,9 @@ class BasicLogger(object):
         #
         self.logger.setLevel(logging.DEBUG)
         # Create a logging format
-        formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s', 
-                                        "%Y-%m-%d %H:%M:%S")
+        formatter = logging.Formatter(
+            "%(asctime)s - %(levelname)s - %(message)s", "%Y-%m-%d %H:%M:%S"
+        )
 
         if not self.logger.handlers:
             # Create a file handler
@@ -44,6 +46,7 @@ class BasicLogger(object):
     def critical(self, message):
         self.logger.critical(message)
 
+
 if __name__ == "__main__":
-    logger = BasicLogger('test.log')
+    logger = BasicLogger("test.log")
     logger.info("This is a test")

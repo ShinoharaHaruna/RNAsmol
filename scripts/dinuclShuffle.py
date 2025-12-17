@@ -1,10 +1,11 @@
 ### altschulEriksonDinuclShuffle.py
 ### P. Clote, Oct 2003
-### dinuclShuffle function 
+### dinuclShuffle function
 
 import copy, random, sys
+
 # MEME Suite libraries
-sys.path.append('anaconda3/envs/bioinfo_py36/lib/meme-5.0.5/python')
+sys.path.append("anaconda3/envs/bioinfo_py36/lib/meme-5.0.5/python")
 import alphabet_py3 as alphabet
 import sequence_py3 as sequence
 
@@ -24,18 +25,20 @@ def computeCounts(s, alph):
             dinuclCnt[x][y] += 1
     return nuclCnt, dinuclCnt
 
+
 def chooseEdge(x, dinuclCnt, alph):
     z = random.random()
     denom = sum(dinuclCnt[x])
     numerator = 0
     for y in range(len(dinuclCnt[x]) - 1):
         numerator += dinuclCnt[x][y]
-        if z < float(numerator)/float(denom):
+        if z < float(numerator) / float(denom):
             dinuclCnt[x][y] -= 1
             return y
     y = len(dinuclCnt[x]) - 1
     dinuclCnt[x][y] -= 1
     return y
+
 
 def connectedToLast(edgeList, usedSymI, lastSymI):
     D = {}
@@ -53,11 +56,12 @@ def connectedToLast(edgeList, usedSymI, lastSymI):
             return False
     return True
 
+
 def eulerian(s, alph):
     nuclCnt, dinuclCnt = computeCounts(s, alph)
-    #compute nucleotides appearing in s
+    # compute nucleotides appearing in s
     usedSymI = [x for x in range(len(nuclCnt)) if nuclCnt[x] > 0]
-    #create dinucleotide shuffle L
+    # create dinucleotide shuffle L
     lastSymI = alph.getIndex(s[-1])
     ok = False
     while not ok:
@@ -65,9 +69,10 @@ def eulerian(s, alph):
         edgeList = []
         for x in usedSymI:
             if x != lastSymI:
-                edgeList.append( (x, chooseEdge(x, counts, alph)) )
+                edgeList.append((x, chooseEdge(x, counts, alph)))
         ok = connectedToLast(edgeList, usedSymI, lastSymI)
     return edgeList
+
 
 def computeList(s, alph):
     out = [[] for i in range(alph.getFullLen())]
@@ -79,7 +84,8 @@ def computeList(s, alph):
             out[x].append(y)
     return out
 
-def dinuclShuffle(s, alph = alphabet.dna()):
+
+def dinuclShuffle(s, alph=alphabet.dna()):
     # check we can actually shuffle it
     if len(s) <= 2:
         return s
@@ -89,16 +95,16 @@ def dinuclShuffle(s, alph = alphabet.dna()):
     symIList = computeList(s, alph)
     # remove last edges from each vertex list, shuffle, then add back
     # the removed edges at end of vertex lists.
-    for [x,y] in edgeList:
+    for [x, y] in edgeList:
         symIList[x].remove(y)
     for x in range(len(symIList)):
         random.shuffle(symIList[x])
-    for [x,y] in edgeList:
+    for [x, y] in edgeList:
         symIList[x].append(y)
-    #construct the eulerian path
+    # construct the eulerian path
     prevSymI = alph.getIndex(s[0])
     L = [alph.getSymbol(prevSymI)]
-    for i in range(len(s)-2):
+    for i in range(len(s) - 2):
         symI = symIList[prevSymI].pop(0)
         L.append(alph.getSymbol(symI))
         prevSymI = symI
